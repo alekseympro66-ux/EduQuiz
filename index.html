@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuiz - Образовательная платформа</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #8f94fb;
+            --accent-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #51cf66;
+            --warning-color: #ffd43b;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--light-color);
+            min-height: 100vh;
+            transition: var(--transition);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.light-theme {
+            background: linear-gradient(135deg, #a8c0ff, #3f4c6b);
+            color: var(--dark-color);
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #232526, #414345);
+            color: var(--light-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Auth Styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .auth-form h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: var(--light-color);
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .auth-form input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent-color);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: var(--light-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li a i {
+            margin-right: 8px;
+        }
+
+        nav ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Categories Styles */
+        .categories-section {
+            margin-bottom: 40px;
+        }
+
+        .categories-section h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .categories-section h2 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .categories-container {
+            position: relative;
+            margin-top: 30px;
+        }
+
+        .categories-scroll {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 10px 0;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.1);
+        }
+
+        .categories-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .categories-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .categories-scroll::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .scroll-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .scroll-left {
+            left: -20px;
+        }
+
+        .scroll-right {
+            right: -20px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-card i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .category-card h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .category-card p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .locked {
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .locked::after {
+            content: "\f023";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--accent-color);
+        }
+
+        /* Questions Grid Styles */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .question-card.answered {
+            border-left: 5px solid var(--success-color);
+        }
+
+        .question-card.incorrect {
+            border-left: 5px solid var(--warning-color);
+        }
+
+        .question-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .question-card.locked:hover {
+            transform: none;
+        }
+
+        .question-number {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .question-points {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .points-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .question-status {
+            font-size: 20px;
+        }
+
+        .question-status.correct {
+            color: var(--success-color);
+        }
+
+        .question-status.incorrect {
+            color: var(--warning-color);
+        }
+
+        /* Quiz Screen Styles */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .question {
+            font-size: 22px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .text-answer {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .text-answer:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .answer-feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .answer-feedback.correct {
+            background: var(--success-color);
+            display: block;
+        }
+
+        .answer-feedback.incorrect {
+            background: var(--warning-color);
+            display: block;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--dark-color);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Settings Styles */
+        .settings-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-group h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .setting-group h3 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 15px;
+        }
+
+        .theme-option {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-option.active {
+            background: var(--accent-color);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .volume-control input {
+            flex: 1;
+        }
+
+        .danger-zone {
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        /* Profile Styles */
+        .profile-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 50px;
+            color: white;
+        }
+
+        .profile-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-info h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .profile-info p {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* УЛУЧШЕННЫЙ ДЕКОРАТИВНЫЙ УЗОР С БЕСКОНЕЧНОЙ ИЛЛЮЗИЕЙ */
+        .decorative-pattern {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            z-index: -1;
+            opacity: 0.15;
+            overflow: hidden;
+        }
+
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 400%;
+            height: 100%;
+            display: flex;
+            animation: wave-flow 20s linear infinite;
+        }
+
+        .wave {
+            position: relative;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 20%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0.3) 80%,
+                transparent 100%);
+            mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M0 0v46.29c47.79 22.2 103.59 32.17 158 28 70.36-5.37 136.33-33.31 206.8-37.5 73.84-4.36 147.54 16.88 218.2 35.26 69.27 18 138.3 24.88 209.4 13.08 36.15-6 69.85-17.84 104.45-29.34C989.49 25 1113-14.29 1200 52.47V0z" /></svg>');
+            mask-size: 1200px 120px;
+            mask-repeat: repeat-x;
+        }
+
+        .wave:nth-child(1) {
+            opacity: 0.7;
+        }
+
+        .wave:nth-child(2) {
+            opacity: 0.5;
+        }
+
+        .wave:nth-child(3) {
+            opacity: 0.3;
+        }
+
+        .wave:nth-child(4) {
+            opacity: 0.2;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            filter: blur(5px);
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            bottom: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            bottom: 30%;
+            left: 75%;
+            animation-delay: -8s;
+        }
+
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 50%;
+            left: 35%;
+            animation-delay: -15s;
+        }
+
+        .shape:nth-child(4) {
+            width: 60px;
+            height: 60px;
+            bottom: 25%;
+            left: 90%;
+            animation-delay: -12s;
+        }
+
+        .shape:nth-child(5) {
+            width: 100px;
+            height: 100px;
+            bottom: 65%;
+            left: 15%;
+            animation-delay: -20s;
+        }
+
+        @keyframes wave-flow {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-25%);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.7;
+            }
+            25% {
+                transform: translateY(-40px) translateX(20px) rotate(90deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(-20px) translateX(40px) rotate(180deg);
+                opacity: 0.5;
+            }
+            75% {
+                transform: translateY(20px) translateX(20px) rotate(270deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            nav ul li {
+                margin: 0;
+            }
+
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .scroll-btn {
+                display: none;
+            }
+
+            .quiz-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .quiz-actions .btn {
+                width: 100%;
+            }
+
+            .decorative-pattern {
+                height: 100px;
+            }
+
+            .wave {
+                mask-size: 800px 80px;
+            }
+
+            .shape {
+                filter: blur(3px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Улучшенный декоративный узор с бесконечной иллюзией -->
+    <div class="decorative-pattern">
+        <div class="wave-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-form">
+            <h2><i class="fas fa-graduation-cap"></i> EduQuiz</h2>
+            <div id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Имя пользователя">
+                <input type="password" id="loginPassword" placeholder="Пароль">
+                <button class="btn" id="loginBtn">Войти</button>
+                <p>Нет аккаунта? <a href="#" id="showRegister">Зарегистрироваться</a></p>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <input type="text" id="registerUsername" placeholder="Имя пользователя">
+                <input type="email" id="registerEmail" placeholder="Email">
+                <input type="password" id="registerPassword" placeholder="Пароль">
+                <button class="btn" id="registerBtn">Зарегистрироваться</button>
+                <p>Уже есть аккаунт? <a href="#" id="showLogin">Войти</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application (initially hidden) -->
+    <div id="app" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="container header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i> EduQuiz
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" id="categoriesBtn"><i class="fas fa-th"></i> Категории</a></li>
+                        <li><a href="#" id="profileBtn"><i class="fas fa-user"></i> Профиль</a></li>
+                        <li><a href="#" id="settingsBtn"><i class="fas fa-cog"></i> Настройки</a></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Categories Screen -->
+            <div id="categoriesScreen">
+                <h1>Выберите категорию</h1>
+
+                <!-- Первая категория -->
+                <div class="categories-section">
+                    <h2><i class="fas fa-archive"></i> Категория 1</h2>
+                    <div class="categories-container">
+                        <button class="scroll-btn scroll-left" id="scrollLeftBtn1">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="categories-scroll" id="categoriesContainer1">
+                            <!-- Categories will be populated by JavaScript -->
+                        </div>
+                        <button class="scroll-btn scroll-right" id="scrollRightBtn1">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вторая категория -->
+                <div class="categories-section">
+                    <h2><i class="fas fa-archive"></i> Категория 2</h2>
+                    <div class="categories-container">
+                        <button class="scroll-btn scroll-left" id="scrollLeftBtn2">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="categories-scroll" id="categoriesContainer2">
+                            <!-- Categories will be populated by JavaScript -->
+                        </div>
+                        <button class="scroll-btn scroll-right" id="scrollRightBtn2">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Screen -->
+            <div id="questionsScreen" style="display: none;">
+                <div class="questions-header">
+                    <button class="btn btn-secondary" id="backToCategoriesBtn">
+                        <i class="fas fa-arrow-left"></i> Назад к категориям
+                    </button>
+                    <h1 id="questionsCategoryTitle">Вопросы по категории</h1>
+                </div>
+                <div class="questions-grid" id="questionsContainer">
+                    <!-- Questions will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quizScreen" style="display: none;">
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <div class="quiz-title" id="quizCategoryTitle">Категория</div>
+                        <div class="score">Баллы: <span id="currentScore">0</span></div>
+                    </div>
+                    <div class="question" id="questionText">Вопрос будет здесь</div>
+                    <input type="text" class="text-answer" id="textAnswer" placeholder="Введите ваш ответ...">
+                    <div class="answer-feedback" id="answerFeedback"></div>
+                    <div class="quiz-actions">
+                        <button class="btn btn-secondary" id="backToQuestionsBtn">
+                            <i class="fas fa-arrow-left"></i> Назад к вопросам
+                        </button>
+                        <button class="btn" id="checkAnswerBtn">Проверить ответ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Screen -->
+            <div id="profileScreen" style="display: none;">
+                <div class="profile-container">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="profileUsername">Пользователь</h2>
+                        <p>Участник с <span id="profileJoinDate">01.01.2023</span></p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalPoints">0</div>
+                            <div class="stat-label">Всего баллов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="completedQuizzes">0</div>
+                            <div class="stat-label">Пройдено викторин</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="correctAnswers">0</div>
+                            <div class="stat-label">Правильных ответов</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div id="settingsScreen" style="display: none;">
+                <h1>Настройки</h1>
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <h3><i class="fas fa-palette"></i> Тема оформления</h3>
+                        <div class="theme-selector">
+                            <div class="theme-option active" data-theme="default">Стандартная</div>
+                            <div class="theme-option" data-theme="light">Светлая</div>
+                            <div class="theme-option" data-theme="dark">Темная</div>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3><i class="fas fa-volume-up"></i> Громкость музыки</h3>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-mute"></i>
+                            <input type="range" id="musicVolume" min="0" max="100" value="50">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3><i class="fas fa-bell"></i> Громкость звуков</h3>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-mute"></i>
+                            <input type="range" id="soundVolume" min="0" max="100" value="70">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                    </div>
+                    <div class="setting-group danger-zone">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Опасная зона</h3>
+                        <button class="btn btn-danger" id="deleteAccountBtn">Удалить аккаунт</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <h2>Удаление аккаунта</h2>
+            <p>Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить, и все ваши данные будут потеряны.</p>
+            <div class="modal-actions">
+                <button class="btn" id="cancelDeleteBtn">Отмена</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Удалить аккаунт</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="correctSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="incorrectSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="unlockSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Application State
+        const state = {
+            currentUser: null,
+            // Первая категория - Основные предметы
+            categories1: [
+                {
+                    id: 1,
+                    name: "Математика",
+                    icon: "fas fa-calculator",
+                    questions: [
+                        { id: 1, question: "Сколько будет 2 + 2?", answer: "4", points: 1 },
+                        { id: 2, question: "Чему равен квадратный корень из 64?", answer: "8", points: 1 },
+                        { id: 3, question: "Сколько градусов в прямом угле?", answer: "90", points: 1 },
+                        { id: 4, question: "Чему равно π (пи) с точностью до двух знаков?", answer: "3.14", points: 1 },
+                        { id: 5, question: "Решите уравнение: 3x - 7 = 8", answer: "5", points: 1 }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Английский язык",
+                    icon: "fas fa-language",
+                    questions: [
+                        { id: 1, question: "Как переводится слово 'apple'?", answer: "яблоко", points: 1 },
+                        { id: 2, question: "Напишите форму глагола 'to be' для местоимения 'I' в настоящем времени", answer: "am", points: 1 },
+                        { id: 3, question: "Как по-английски будет 'спасибо'?", answer: "thank you", points: 1 },
+                        { id: 4, question: "Переведите на английский: 'Я люблю читать книги'", answer: "i love reading books", points: 1 },
+                        { id: 5, question: "Какой артикль используется с единственным существительным 'sun'?", answer: "the", points: 1 }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "История",
+                    icon: "fas fa-monument",
+                    questions: [
+                        { id: 1, question: "В каком году началась Первая мировая война?", answer: "1939", points: 1 },
+                        { id: 2, question: "Кто был первым президентом США?", answer: "джордж вашингтон", points: 1 },
+                        { id: 3, question: "В каком году человек впервые полетел в космос?", answer: "1961", points: 1 },
+                        { id: 4, question: "Кто написал 'Войну и мир'?", answer: "лев толстой", points: 1 },
+                        { id: 5, question: "В каком году распался Советский Союз?", answer: "1991", points: 1 }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "География",
+                    icon: "fas fa-globe-americas",
+                    questions: [
+                        { id: 1, question: "Какая самая длинная река в мире?", answer: "амазонка", points: 1 },
+                        { id: 2, question: "Какая страна имеет наибольшую площадь?", answer: "россия", points: 1 },
+                        { id: 3, question: "Какой океан самый большой?", answer: "тихий", points: 1 },
+                        { id: 4, question: "Столица Австралии?", answer: "канберра", points: 1 },
+                        { id: 5, question: "Какая пустыня является самой большой в мире?", answer: "сахара", points: 1 }
+                    ]
+                }
+            ],
+            // Вторая категория - Дополнительные предметы
+            categories2: [
+                {
+                    id: 5,
+                    name: "Биология",
+                    icon: "fas fa-dna",
+                    questions: [
+                        { id: 1, question: "Сколько хромосом у человека?", answer: "46", points: 1 },
+                        { id: 2, question: "Какое растение является хищным?", answer: "росянка", points: 1 },
+                        { id: 3, question: "Какой орган отвечает за перекачивание крови?", answer: "сердце", points: 1 },
+                        { id: 4, question: "Какое животное является самым большим на Земле?", answer: "синий кит", points: 1 },
+                        { id: 5, question: "Как называется процесс фотосинтеза у растений?", answer: "фотосинтез", points: 1 }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "Химия",
+                    icon: "fas fa-flask",
+                    questions: [
+                        { id: 1, question: "Какой химический элемент обозначается символом 'O'?", answer: "кислород", points: 1 },
+                        { id: 2, question: "Какова химическая формула воды?", answer: "h2o", points: 1 },
+                        { id: 3, question: "Какой газ необходим для дыхания человека?", answer: "кислород", points: 1 },
+                        { id: 4, question: "Что такое pH?", answer: "водородный показатель", points: 1 },
+                        { id: 5, question: "Какой элемент является основой органической химии?", answer: "углерод", points: 1 }
+                    ]
+                },
+                {
+                    id: 7,
+                    name: "Физика",
+                    icon: "fas fa-atom",
+                    questions: [
+                        { id: 1, question: "Какова скорость света в вакууме?", answer: "300000 км/с", points: 1 },
+                        { id: 2, question: "Кто открыл закон всемирного тяготения?", answer: "ньютон", points: 1 },
+                        { id: 3, question: "Что измеряется в герцах?", answer: "частота", points: 1 },
+                        { id: 4, question: "Какой закон описывает сохранение энергии?", answer: "первый закон термодинамики", points: 1 },
+                        { id: 5, question: "Что такое инерция?", answer: "свойство тела сохранять состояние движения", points: 1 }
+                    ]
+                },
+                {
+                    id: 8,
+                    name: "Программирование",
+                    icon: "fas fa-code",
+                    questions: [
+                        { id: 1, question: "Что такое HTML?", answer: "язык разметки", points: 1 },
+                        { id: 2, question: "Какой язык программирования используется для веб-разработки?", answer: "javascript", points: 1 },
+                        { id: 3, question: "Что такое CSS?", answer: "каскадные таблицы стилей", points: 1 },
+                        { id: 4, question: "Как объявить переменную в JavaScript?", answer: "var let const", points: 1 },
+                        { id: 5, question: "Что такое API?", answer: "интерфейс программирования приложений", points: 1 }
+                    ]
+                },
+                {
+                    id: 8,
+                    name: "время",
+                    icon: "fas fa-clock",
+                    questions: [
+                        { id: 1, question: "сколько нужно времени чтоб пройти 1 км?", answer: "12 минут", points: 2 },
+                        { id: 2, question: "Какая норма сна у человека?", answer: "7-8 часов", points: 2 },
+                        { id: 3, question: "Сколько варится кортошка?", answer: "30 минут", points: 2 },
+                        { id: 4, question: "за скольо секунд можно разогнатся на велосипеде?", answer: "за 4 секунды", points: 2 },
+                        { id: 5, question: "Сколько времени потребутеся для разгона авто до 100 км/ч,если мощность двигателя 260 л/с", answer: "3-5 минут", points: 3 },
+                    ]
+                },
+            ],
+            currentCategory: null,
+            currentQuestion: null
+        };
+
+        // DOM Elements
+        const authScreen = document.getElementById('authScreen');
+        const app = document.getElementById('app');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+
+        const categoriesScreen = document.getElementById('categoriesScreen');
+        const questionsScreen = document.getElementById('questionsScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const profileScreen = document.getElementById('profileScreen');
+        const settingsScreen = document.getElementById('settingsScreen');
+
+        const categoriesContainer1 = document.getElementById('categoriesContainer1');
+        const categoriesContainer2 = document.getElementById('categoriesContainer2');
+        const scrollLeftBtn1 = document.getElementById('scrollLeftBtn1');
+        const scrollRightBtn1 = document.getElementById('scrollRightBtn1');
+        const scrollLeftBtn2 = document.getElementById('scrollLeftBtn2');
+        const scrollRightBtn2 = document.getElementById('scrollRightBtn2');
+        const questionsContainer = document.getElementById('questionsContainer');
+        const questionsCategoryTitle = document.getElementById('questionsCategoryTitle');
+        const backToCategoriesBtn = document.getElementById('backToCategoriesBtn');
+        const backToQuestionsBtn = document.getElementById('backToQuestionsBtn');
+
+        const quizCategoryTitle = document.getElementById('quizCategoryTitle');
+        const questionText = document.getElementById('questionText');
+        const textAnswer = document.getElementById('textAnswer');
+        const answerFeedback = document.getElementById('answerFeedback');
+        const currentScore = document.getElementById('currentScore');
+        const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+
+        const categoriesBtn = document.getElementById('categoriesBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        const profileUsername = document.getElementById('profileUsername');
+        const profileJoinDate = document.getElementById('profileJoinDate');
+        const totalPoints = document.getElementById('totalPoints');
+        const completedQuizzes = document.getElementById('completedQuizzes');
+        const correctAnswers = document.getElementById('correctAnswers');
+
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const musicVolume = document.getElementById('musicVolume');
+        const soundVolume = document.getElementById('soundVolume');
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        const deleteAccountModal = document.getElementById('deleteAccountModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const buttonSound = document.getElementById('buttonSound');
+        const correctSound = document.getElementById('correctSound');
+        const incorrectSound = document.getElementById('incorrectSound');
+        const unlockSound = document.getElementById('unlockSound');
+
+        // Initialize the application
+        function init() {
+            // Check if user is already logged in (from localStorage)
+            const savedUser = localStorage.getItem('eduquiz_user');
+            if (savedUser) {
+                state.currentUser = JSON.parse(savedUser);
+                showApp();
+            }
+
+            // Set up event listeners
+            setupEventListeners();
+
+            // Start background music
+            backgroundMusic.volume = 0.5;
+            backgroundMusic.play().catch(e => console.log("Autoplay prevented:", e));
+
+            // Render categories
+            renderCategories();
+        }
+
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Authentication
+            loginBtn.addEventListener('click', handleLogin);
+            registerBtn.addEventListener('click', handleRegister);
+            showRegister.addEventListener('click', () => toggleAuthForms('register'));
+            showLogin.addEventListener('click', () => toggleAuthForms('login'));
+
+            // Navigation
+            categoriesBtn.addEventListener('click', () => showScreen('categoriesScreen'));
+            profileBtn.addEventListener('click', () => showScreen('profileScreen'));
+            settingsBtn.addEventListener('click', () => showScreen('settingsScreen'));
+            logoutBtn.addEventListener('click', handleLogout);
+
+            // Categories and questions navigation
+            backToCategoriesBtn.addEventListener('click', () => showScreen('categoriesScreen'));
+            backToQuestionsBtn.addEventListener('click', () => showScreen('questionsScreen'));
+
+            // Quiz
+            checkAnswerBtn.addEventListener('click', checkAnswer);
+            textAnswer.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+
+            // Categories scrolling
+            scrollLeftBtn1.addEventListener('click', () => {
+                categoriesContainer1.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+
+            scrollRightBtn1.addEventListener('click', () => {
+                categoriesContainer1.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+
+            scrollLeftBtn2.addEventListener('click', () => {
+                categoriesContainer2.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+
+            scrollRightBtn2.addEventListener('click', () => {
+                categoriesContainer2.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+
+            // Settings
+            themeOptions.forEach(option => {
+                option.addEventListener('click', handleThemeChange);
+            });
+
+            musicVolume.addEventListener('input', handleMusicVolumeChange);
+            soundVolume.addEventListener('input', handleSoundVolumeChange);
+
+            deleteAccountBtn.addEventListener('click', () => showModal('deleteAccountModal'));
+            cancelDeleteBtn.addEventListener('click', () => hideModal('deleteAccountModal'));
+            confirmDeleteBtn.addEventListener('click', handleDeleteAccount);
+
+            // Add sound to all buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                    playSound(buttonSound);
+                }
+            });
+        }
+
+        // Authentication functions
+        function handleLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+
+            // In a real app, you would verify credentials with a server
+            // For this demo, we'll just create a user
+            state.currentUser = {
+                username,
+                joinDate: new Date().toLocaleDateString('ru-RU'),
+                points: 0,
+                completedQuizzes: 0,
+                correctAnswers: 0,
+                unlockedCategories: [1, 2, 3, 4, 5, 6, 7, 8],
+                answeredQuestions: {}
+            };
+
+            localStorage.setItem('eduquiz_user', JSON.stringify(state.currentUser));
+            showApp();
+        }
+
+        function handleRegister() {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            if (!username || !email || !password) {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+
+            // In a real app, you would send registration data to a server
+            // For this demo, we'll just create a user
+            state.currentUser = {
+                username,
+                email,
+                joinDate: new Date().toLocaleDateString('ru-RU'),
+                points: 0,
+                completedQuizzes: 0,
+                correctAnswers: 0,
+                unlockedCategories: [1, 2, 3, 4, 5, 6, 7, 8],
+                answeredQuestions: {}
+            };
+
+            localStorage.setItem('eduquiz_user', JSON.stringify(state.currentUser));
+            showApp();
+        }
+
+        function toggleAuthForms(form) {
+            if (form === 'register') {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            } else {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            }
+        }
+
+        function handleLogout() {
+            state.currentUser = null;
+            localStorage.removeItem('eduquiz_user');
+            authScreen.style.display = 'flex';
+            app.style.display = 'none';
+
+            // Reset UI
+            showScreen('categoriesScreen');
+        }
+
+        // App navigation
+        function showApp() {
+            authScreen.style.display = 'none';
+            app.style.display = 'block';
+            updateProfileInfo();
+        }
+
+        function showScreen(screenName) {
+            // Hide all screens
+            categoriesScreen.style.display = 'none';
+            questionsScreen.style.display = 'none';
+            quizScreen.style.display = 'none';
+            profileScreen.style.display = 'none';
+            settingsScreen.style.display = 'none';
+
+            // Show the requested screen
+            document.getElementById(screenName).style.display = 'block';
+        }
+
+        // Categories and questions
+        function renderCategories() {
+            // Render first category
+            categoriesContainer1.innerHTML = '';
+            state.categories1.forEach(category => {
+                const isLocked = category.locked &&
+                    (!state.currentUser || !state.currentUser.unlockedCategories.includes(category.id));
+
+                const categoryCard = document.createElement('div');
+                categoryCard.className = `category-card ${isLocked ? 'locked' : ''}`;
+                categoryCard.innerHTML = `
+                    <i class="${category.icon}"></i>
+                    <h3>${category.name}</h3>
+                    <p>${isLocked ? `Нужно ${category.requiredPoints} баллов` : `${category.questions.length} вопросов`}</p>
+                `;
+
+                if (!isLocked) {
+                    categoryCard.addEventListener('click', () => showCategoryQuestions(category));
+                }
+
+                categoriesContainer1.appendChild(categoryCard);
+            });
+
+            // Render second category
+            categoriesContainer2.innerHTML = '';
+            state.categories2.forEach(category => {
+                const isLocked = category.locked &&
+                    (!state.currentUser || !state.currentUser.unlockedCategories.includes(category.id));
+
+                const categoryCard = document.createElement('div');
+                categoryCard.className = `category-card ${isLocked ? 'locked' : ''}`;
+                categoryCard.innerHTML = `
+                    <i class="${category.icon}"></i>
+                    <h3>${category.name}</h3>
+                    <p>${isLocked ? `Нужно ${category.requiredPoints} баллов` : `${category.questions.length} вопросов`}</p>
+                `;
+
+                if (!isLocked) {
+                    categoryCard.addEventListener('click', () => showCategoryQuestions(category));
+                }
+
+                categoriesContainer2.appendChild(categoryCard);
+            });
+        }
+
+        function showCategoryQuestions(category) {
+            state.currentCategory = category;
+            questionsCategoryTitle.textContent = `Вопросы: ${category.name}`;
+            renderQuestions();
+            showScreen('questionsScreen');
+        }
+
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+
+            if (!state.currentCategory) return;
+
+            state.currentCategory.questions.forEach((question, index) => {
+                const questionKey = `${state.currentCategory.id}-${question.id}`;
+                const isAnswered = state.currentUser.answeredQuestions[questionKey];
+                const isCorrect = isAnswered === true;
+
+                const questionCard = document.createElement('div');
+                questionCard.className = `question-card ${isAnswered ? (isCorrect ? 'answered' : 'incorrect') : ''}`;
+                questionCard.innerHTML = `
+                    <div class="question-number">Вопрос ${index + 1}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="question-points">
+                        <div class="points-badge">${question.points} балл</div>
+                        <div class="question-status ${isCorrect ? 'correct' : 'incorrect'}">
+                            ${isAnswered ? (isCorrect ? '✓' : '✗') : ''}
+                        </div>
+                    </div>
+                `;
+
+                questionCard.addEventListener('click', () => startQuestion(question));
+
+                questionsContainer.appendChild(questionCard);
+            });
+        }
+
+        function startQuestion(question) {
+            state.currentQuestion = question;
+            quizCategoryTitle.textContent = state.currentCategory.name;
+            questionText.textContent = question.question;
+            textAnswer.value = '';
+            textAnswer.disabled = false;
+
+            // Clear feedback
+            answerFeedback.className = 'answer-feedback';
+            answerFeedback.textContent = '';
+
+            showScreen('quizScreen');
+        }
+
+        function checkAnswer() {
+            const userAnswer = textAnswer.value.trim().toLowerCase();
+            const correctAnswer = state.currentQuestion.answer.toLowerCase();
+
+            const isCorrect = userAnswer === correctAnswer;
+            const questionKey = `${state.currentCategory.id}-${state.currentQuestion.id}`;
+
+            // Only count if not already answered
+            if (!state.currentUser.answeredQuestions[questionKey]) {
+                state.currentUser.answeredQuestions[questionKey] = isCorrect;
+
+                if (isCorrect) {
+                    state.currentUser.points += state.currentQuestion.points;
+                    state.currentUser.correctAnswers++;
+                    answerFeedback.className = 'answer-feedback correct';
+                    answerFeedback.textContent = 'Правильно!';
+                    playSound(correctSound);
+                } else {
+                    answerFeedback.className = 'answer-feedback incorrect';
+                    answerFeedback.textContent = 'Неправильно! Попробуйте еще раз.';
+                    playSound(incorrectSound);
+                }
+
+                // Check if user unlocked new categories
+                let unlockedNew = false;
+                [...state.categories1, ...state.categories2].forEach(category => {
+                    if (category.locked &&
+                        !state.currentUser.unlockedCategories.includes(category.id) &&
+                        state.currentUser.points >= category.requiredPoints) {
+                        state.currentUser.unlockedCategories.push(category.id);
+                        unlockedNew = true;
+                    }
+                });
+
+                localStorage.setItem('eduquiz_user', JSON.stringify(state.currentUser));
+                updateProfileInfo();
+
+                if (unlockedNew) {
+                    playSound(unlockSound);
+                    setTimeout(() => {
+                        alert(`Поздравляем! Вы открыли новые категории!`);
+                        renderCategories();
+                    }, 1000);
+                }
+            } else {
+                // Already answered, just show feedback
+                if (isCorrect) {
+                    answerFeedback.className = 'answer-feedback correct';
+                    answerFeedback.textContent = 'Правильно!';
+                } else {
+                    answerFeedback.className = 'answer-feedback incorrect';
+                    answerFeedback.textContent = 'Неправильно! Попробуйте еще раз.';
+                }
+            }
+
+            textAnswer.disabled = true;
+
+            // Update the questions view
+            setTimeout(() => {
+                renderQuestions();
+            }, 1500);
+        }
+
+        // Profile
+        function updateProfileInfo() {
+            if (!state.currentUser) return;
+
+            profileUsername.textContent = state.currentUser.username;
+            profileJoinDate.textContent = state.currentUser.joinDate;
+            totalPoints.textContent = state.currentUser.points;
+            completedQuizzes.textContent = Object.keys(state.currentUser.answeredQuestions).length;
+            correctAnswers.textContent = state.currentUser.correctAnswers;
+        }
+
+        // Settings
+        function handleThemeChange(e) {
+            const theme = e.target.getAttribute('data-theme');
+
+            // Update active theme button
+            themeOptions.forEach(option => {
+                option.classList.remove('active');
+            });
+            e.target.classList.add('active');
+
+            // Apply theme to body
+            document.body.className = '';
+            if (theme !== 'default') {
+                document.body.classList.add(`${theme}-theme`);
+            }
+        }
+
+        function handleMusicVolumeChange() {
+            backgroundMusic.volume = musicVolume.value / 100;
+        }
+
+        function handleSoundVolumeChange() {
+            buttonSound.volume = soundVolume.value / 100;
+            correctSound.volume = soundVolume.value / 100;
+            incorrectSound.volume = soundVolume.value / 100;
+            unlockSound.volume = soundVolume.value / 100;
+        }
+
+        function handleDeleteAccount() {
+            if (state.currentUser) {
+                localStorage.removeItem('eduquiz_user');
+                state.currentUser = null;
+                hideModal('deleteAccountModal');
+                authScreen.style.display = 'flex';
+                app.style.display = 'none';
+            }
+        }
+
+        // Utility functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Sound play prevented:", e));
+        }
+
+        // Initialize the app when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
